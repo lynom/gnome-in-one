@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import './App.css'
+import GameUI from './GameUI.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <h1>Gnome in One</h1>
+      <GameUI />
     </>
   )
 }
