@@ -23,14 +23,14 @@ export default function GameUI() {
     return (
         <div style={css.root}>
             {/* Block panel */}
-            <div style={css.panel}>
-                <h3 style={css.panelTitle}>Blocks</h3>
+            <div style={css.leftPanel}>
+                <h3 style={css.leftPanelTitle}>Blocks</h3>
                 {BLOCKS.map(block => (
                     <button
                         key={block.id}
                         onClick={() => setSelected(block.id)}
                         style={{
-                            ...css.blockButton,
+                            ...css.leftPanelButton,
                             backgroundColor: selected === block.id ? "#444" : "#222"
                         }}
                     >
@@ -61,29 +61,31 @@ export default function GameUI() {
 const css = {
     root: {
         display: "flex",
-        height: "100vh",
+        height: "auto",
         background: "#000000",
         fontFamily: "'Calibri', system-ui, sans-serif",
         color: "#ffffff",
-        padding: "24px",
-        gap: "10px"
+        padding: "8px",
+        gap: "8px"
     },
 
-    panel: {
+    // blocks panel  
+    leftPanel: {
         width: "200px",
+        height: "600px",
         background: "#111",
         padding: "16px",
         borderRadius: "8px",
         border: "1px solid #333"
     },
 
-    panelTitle: {
+    leftPanelTitle: {
         margin: "0 0 16px 0",
         fontSize: "16px",
         fontWeight: "bold"
     },
 
-    blockButton: {
+    leftPanelButton: {
         width: "100%",
         padding: "12px",
         marginBottom: "8px",
@@ -100,16 +102,18 @@ const css = {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        gap: "16px"
+        gap: "10px"
     },
 
     canvas: {
         flex: 1,
+        width: "800px",
         background: "#1a1a1a",
         border: "1px solid #333",
         borderRadius: "8px"
     },
 
+    // play button
     buttonPanel: {
         padding: "12px",
         background: "#111",
