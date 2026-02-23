@@ -22,6 +22,7 @@ export default function GameUI() {
 
     return (
         <div style={css.root}>
+
             {/* Block panel */}
             <div style={css.leftPanel}>
                 <h3 style={css.leftPanelTitle}>Blocks</h3>
@@ -41,6 +42,7 @@ export default function GameUI() {
 
             {/* playfield and play button*/}
             <main style={css.main}>
+
                 {/*playfield*/}
                 <div style={{ ...css.canvas, cursor: selected && phase === "placing" ? "crosshair" : "default", }}
                     onClick={handleCanvasClick}>
@@ -50,7 +52,6 @@ export default function GameUI() {
                 <div style={css.buttonPanel}>
                     Run
                 </div>
-
             </main>
         </div>
     );
@@ -71,8 +72,8 @@ const css = {
 
     // blocks panel  
     leftPanel: {
-        width: "200px",
-        height: "600px",
+        width: "100px",
+        height: "flex",
         background: "#111",
         padding: "16px",
         borderRadius: "8px",
@@ -92,7 +93,7 @@ const css = {
         background: "#222",
         color: "#fff",
         border: "1px solid #444",
-        borderRadius: "4px",
+        borderRadius: "8px",
         cursor: "pointer",
         fontSize: "14px",
         transition: "background 0.2s"
@@ -106,7 +107,7 @@ const css = {
     },
 
     canvas: {
-        flex: 1,
+        height: "400px",
         width: "800px",
         background: "#1a1a1a",
         border: "1px solid #333",
