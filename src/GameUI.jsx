@@ -1,25 +1,39 @@
 import { useState, useRef, useEffect } from "react";
 import Matter from "matter-js";
 
+// filler for future blocks
 const BLOCKS = [
-    { id: "ramp", label: "ramp", icon: "R", color: "#ffffff" }
+    { id: "ramp", label: "ramp", color: "#ffffff" }
 ];
 
 export default function GameUI() {
-    const [phase, setPhase] = useState("placing");
     const [selected, setSelected] = useState(null);
-    const [placed, setPlaced] = useState([]);
+    const canvasRef = useRef(null);
 
-    // placing objects
-    const handleCanvasClick = (e) => {
-        // placeholder for object logic
-        if (phase !== "placing" || !selected) return;
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const block = BLOCKS.find(b => b.id === selected);
-        setPlaced(p => [...p, { ...block, x, y, uid: Math.random() }]);
-    };
+    // starts engine  
+    useEffect(() => {
+        if (!canvasRef.current) return;
+
+        const engine = Matter.Engine.create();
+        const render = Matter.Render.create({
+            canvas: canvasRef.current,
+            engine,
+            options: {
+                width: 800,
+                height: 400,
+                wireframes: false,
+                background: "#1a1a1a"
+            }
+        });
+
+        Matter.Engine.run(engine);
+        Matter.Render.run(render);
+
+        return () => {
+            Matter.Render.stop(render);
+            Matter.Engine.clear(engine);
+        };
+    }, []);
 
     return (
         <div style={css.root}>
@@ -44,15 +58,11 @@ export default function GameUI() {
             {/* playfield and play button*/}
             <main style={css.main}>
 
-                {/*playfield*/}
-                <div style={{ ...css.canvas, cursor: selected && phase === "placing" ? "crosshair" : "default", }}
-                    onClick={handleCanvasClick}>
-                </div>
+                <canvas ref={canvasRef} width={800} height={400} style={css.playfield} />
 
-                {/*buttons*/}
-                <div style={css.buttonPanel}>
+                <button style={css.runButton}>
                     Run
-                </div>
+                </button>
             </main>
         </div>
     );
@@ -107,7 +117,7 @@ const css = {
         gap: "10px"
     },
 
-    canvas: {
+    playfield: {
         height: "400px",
         width: "800px",
         background: "#1a1a1a",
@@ -115,13 +125,14 @@ const css = {
         borderRadius: "8px"
     },
 
-    // play button
-    buttonPanel: {
-        padding: "12px",
-        background: "#111",
+    runButton: {
+        padding: "12px 24px",
+        background: "#222",
+        color: "#fff",
+        border: "1px solid #444",
         borderRadius: "8px",
-        border: "1px solid #333",
-        textAlign: "center"
+        cursor: "pointer",
+        transition: "background 0.2s"
     }
 }
 
