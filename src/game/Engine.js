@@ -1,5 +1,6 @@
 import Matter from "matter-js";
 import { Ball } from "./Ball";
+import { Course } from "./Course";
 
 export class Engine {
     // 800 x 400 canvas
@@ -21,6 +22,9 @@ export class Engine {
         // ball and animation frame id
         this.ball = null;
         this.animationId = null;
+
+        // course (obstacles + hole)
+        this.course = new Course(this.engine, this.ctx, this.width, this.height);
     }
 
     createWalls() {
@@ -68,6 +72,9 @@ export class Engine {
         this.ball = new Ball(x, y, radius);
         this.ball.setVelocity(vx, vy);
         Matter.World.add(this.engine.world, this.ball.body);
+        if (this.course) {
+            this.course.setBall(this.ball);
+        }
         return this.ball;
     }
 
@@ -108,6 +115,10 @@ export class Engine {
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, this.width, this.height);
 
+        if (this.course) {
+            this.course.render(ctx);
+        }
+
         // render ball
         if (this.ball) {
             this.ball.render(ctx);
@@ -118,6 +129,9 @@ export class Engine {
     resetBall(x, y) {
         if (this.ball) {
             this.ball.reset(x, y);
+            if (this.course) {
+                this.course.resetBall();
+            }
             this.render();
         }
     }
