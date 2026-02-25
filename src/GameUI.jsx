@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Matter from "matter-js";
+import { Engine } from "./game/Engine";
 
 // filler for future blocks
 const BLOCKS = [
@@ -9,36 +9,36 @@ const BLOCKS = [
 export default function GameUI() {
     const [selected, setSelected] = useState(null);
     const canvasRef = useRef(null);
+    const engineRef = useRef(null);
 
-    // starts engine  
+    // engine
     useEffect(() => {
         if (!canvasRef.current) return;
 
-        const engine = Matter.Engine.create();
-        const render = Matter.Render.create({
-            canvas: canvasRef.current,
-            engine,
-            options: {
-                width: 800,
-                height: 400,
-                wireframes: false,
-                background: "#1a1a1a"
-            }
-        });
+        const gameEngine = new Engine(canvasRef.current, 800, 400);
+        engineRef.current = gameEngine;
 
-        Matter.Engine.run(engine);
-        Matter.Render.run(render);
+        // creates ball
+        gameEngine.addBall(400, 200, 8, 5, -5);
 
         return () => {
-            Matter.Render.stop(render);
-            Matter.Engine.clear(engine);
+            gameEngine.stop();
         };
     }, []);
+
+    // run button
+    const handleRun = () => {
+        if (engineRef.current) {
+            engineRef.current.stop();
+            engineRef.current.resetBall(400, 200);
+            engineRef.current.start();
+        }
+    };
 
     return (
         <div style={css.root}>
 
-            {/* Block panel */}
+            {/* block panel */}
             <div style={css.leftPanel}>
                 <h3 style={css.leftPanelTitle}>Blocks</h3>
                 {BLOCKS.map(block => (
@@ -60,7 +60,7 @@ export default function GameUI() {
 
                 <canvas ref={canvasRef} width={800} height={400} style={css.playfield} />
 
-                <button style={css.runButton}>
+                <button style={css.runButton} onClick={handleRun}>
                     Run
                 </button>
             </main>
@@ -68,7 +68,7 @@ export default function GameUI() {
     );
 }
 
-// styles (may move this to another file)
+// styles (might move this to another file)
 
 const css = {
     root: {

@@ -1,0 +1,124 @@
+import Matter from "matter-js";
+import { Ball } from "./Ball";
+
+export class Engine {
+    // 800 x 400 canvas
+    // change this if we want to change the dimensions later
+    constructor(canvas, width = 800, height = 400) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+        this.width = width;
+        this.height = height;
+        this.wallThickness = 20;
+
+        // create engine
+        this.engine = Matter.Engine.create();
+        this.engine.world.gravity.y = 1;
+
+        // create walls
+        this.createWalls();
+
+        // ball and animation frame id
+        this.ball = null;
+        this.animationId = null;
+    }
+
+    createWalls() {
+        const w = this.width;
+        const h = this.height;
+        const t = this.wallThickness;
+
+        const topWall = Matter.Bodies.rectangle(
+            w / 2,
+            -t / 2,
+            w + t * 2,
+            t,
+            { isStatic: true, label: "wall", friction: 0.5 }
+        );
+
+        const bottomWall = Matter.Bodies.rectangle(
+            w / 2,
+            h + t / 2,
+            w + t * 2,
+            t,
+            { isStatic: true, label: "wall", friction: 0.5 }
+        );
+
+        const leftWall = Matter.Bodies.rectangle(
+            -t / 2,
+            h / 2,
+            t,
+            h + t * 2,
+            { isStatic: true, label: "wall", friction: 0.5 }
+        );
+
+        const rightWall = Matter.Bodies.rectangle(
+            w + t / 2,
+            h / 2,
+            t,
+            h + t * 2,
+            { isStatic: true, label: "wall", friction: 0.5 }
+        );
+
+        Matter.World.add(this.engine.world, [topWall, bottomWall, leftWall, rightWall]);
+    }
+
+    // adds ball to engine
+    addBall(x, y, radius = 8, vx = 5, vy = -5) {
+        this.ball = new Ball(x, y, radius);
+        this.ball.setVelocity(vx, vy);
+        Matter.World.add(this.engine.world, this.ball.body);
+        return this.ball;
+    }
+
+    // starts physics sim
+    start() {
+        // stops last animation
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+
+        const animate = () => {
+            Matter.Engine.update(this.engine);
+            this.render();
+            this.animationId = requestAnimationFrame(animate);
+        };
+        animate();
+    }
+
+    // stops simulation
+    stop() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+        this.render();
+    }
+
+    // render to canvas
+    render() {
+        const ctx = this.ctx;
+
+        // clear canvas
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // draw border
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, this.width, this.height);
+
+        // render ball
+        if (this.ball) {
+            this.ball.render(ctx);
+        }
+    }
+
+    // resets ball to start
+    resetBall(x, y) {
+        if (this.ball) {
+            this.ball.reset(x, y);
+            this.render();
+        }
+    }
+}
