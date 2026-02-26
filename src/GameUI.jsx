@@ -30,7 +30,7 @@ export default function GameUI() {
     const handleRun = () => {
         if (engineRef.current) {
             engineRef.current.stop();
-            engineRef.current.resetBall(400, 200);
+            engineRef.current.resetBall(250, 200);
             engineRef.current.start();
         }
     };
