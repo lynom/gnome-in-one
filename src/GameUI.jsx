@@ -8,6 +8,7 @@ const BLOCKS = [
 
 export default function GameUI() {
     const [selected, setSelected] = useState(null);
+    const [isRunning, setIsRunning] = useState(false);
     const canvasRef = useRef(null);
     const engineRef = useRef(null);
 
@@ -15,17 +16,17 @@ export default function GameUI() {
     useEffect(() => {
         if (!canvasRef.current) return;
 
-        const gameEngine = new Engine(canvasRef.current, 800, 400);
-        engineRef.current = gameEngine;
+        const engine = new Engine(canvasRef.current, 800, 400);
+        engineRef.current = engine;
 
         // creates ball
-        gameEngine.addBall(400, 200, 8, 5, -5);
+        engine.addBall(400, 200, 8, 5, -5);
 
         // render initial state to show blocks
-        gameEngine.render();
+        engine.render();
 
         return () => {
-            gameEngine.stop();
+            engine.stop();
         };
     }, []);
 
@@ -39,7 +40,17 @@ export default function GameUI() {
             if (engineRef.current.ball) {
                 engineRef.current.ball.setVelocity(10, -10);
             }
+            setIsRunning(true);
             engineRef.current.start();
+        }
+    };
+
+    // reset button
+    const handleReset = () => {
+        if (engineRef.current) {
+            engineRef.current.stop();
+            engineRef.current.resetBall(250, 200);
+            setIsRunning(false);
         }
     };
 
@@ -65,11 +76,9 @@ export default function GameUI() {
 
             {/* playfield and play button*/}
             <main style={css.main}>
-
                 <canvas ref={canvasRef} width={800} height={400} style={css.playfield} />
-
-                <button style={css.runButton} onClick={handleRun}>
-                    Run
+                <button style={css.runButton} onClick={isRunning ? handleReset : handleRun}>
+                    {isRunning ? "Reset" : "Run"}
                 </button>
             </main>
         </div>
