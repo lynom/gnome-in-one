@@ -34,6 +34,11 @@ export default function GameUI() {
         if (engineRef.current) {
             engineRef.current.stop();
             engineRef.current.resetBall(250, 200);
+
+            // BALL VELOCITY
+            if (engineRef.current.ball) {
+                engineRef.current.ball.setVelocity(10, -10);
+            }
             engineRef.current.start();
         }
     };
