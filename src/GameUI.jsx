@@ -21,6 +21,9 @@ export default function GameUI() {
         // creates ball
         gameEngine.addBall(400, 200, 8, 5, -5);
 
+        // render initial state to show blocks
+        gameEngine.render();
+
         return () => {
             gameEngine.stop();
         };
